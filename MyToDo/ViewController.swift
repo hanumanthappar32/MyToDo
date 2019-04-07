@@ -11,7 +11,7 @@ import UIKit
 class ViewController: UITableViewController {
     
     
-    let persons = ["Ramesh", "Jalaja", "shilpa", "Adarsh", "Sheetal"]
+    var persons = ["Ramesh", "Jalaja", "shilpa", "Adarsh", "Sheetal"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,5 +44,29 @@ class ViewController: UITableViewController {
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    //MARK - Add new person
+  
+    @IBAction func addbutton(_ sender: UIBarButtonItem) {
+        
+        var textfield = UITextField()
+        
+        let alert = UIAlertController(title: "Add new Person" , message: "", preferredStyle: .alert )
+        let action = UIAlertAction(title: "Add Person", style: .default) { (action) in
+            //what will happen when "add person" is pressed
+            self.persons.append(textfield.text!)
+            self.tableView.reloadData()
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new Person"
+           // print(alertTextField.text as Any)
+            textfield = alertTextField
+        }
+        alert.addAction(action)
+        present(alert, animated: true,completion: nil)
+        
+    }
+    
 }
+
 
