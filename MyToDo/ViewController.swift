@@ -12,9 +12,14 @@ class ViewController: UITableViewController {
     
     
     var persons = ["Ramesh", "Jalaja", "shilpa", "Adarsh", "Sheetal"]
+    let mydefault = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let items = mydefault.array(forKey: "personsList") as? [String] {
+            persons = items
+        }
+        
         // Do any additional setup after loading the view.
     }
     //Mark - Table view data source method
@@ -56,6 +61,7 @@ class ViewController: UITableViewController {
             //what will happen when "add person" is pressed
             self.persons.append(textfield.text!)
             self.tableView.reloadData()
+            self.mydefault.set(self.persons, forKey: "personsList")
         }
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new Person"
