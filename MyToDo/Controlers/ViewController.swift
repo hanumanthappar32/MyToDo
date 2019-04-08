@@ -17,9 +17,7 @@ class ViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-       /* if let items = mydefault.array(forKey: "personsList") as? [String] {
-            persons = items
-        }*/
+        
         let newperson = Items()
             newperson.name = "Ramesh"
             persons.append(newperson)
@@ -32,6 +30,9 @@ class ViewController: UITableViewController {
         newperson2.name = "Shilpa"
         persons.append(newperson2)
         
+        if let items = mydefault.array(forKey: "personsList") as? [Items] {
+            persons = items
+        }
         // Do any additional setup after loading the view.
     }
     //Mark - Table view data source method
