@@ -11,14 +11,26 @@ import UIKit
 class ViewController: UITableViewController {
     
     
-    var persons = ["Ramesh", "Jalaja", "shilpa", "Adarsh", "Sheetal"]
+    var persons = [Items] ()
+    
     let mydefault = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let items = mydefault.array(forKey: "personsList") as? [String] {
+       /* if let items = mydefault.array(forKey: "personsList") as? [String] {
             persons = items
-        }
+        }*/
+        let newperson = Items()
+            newperson.name = "Ramesh"
+            persons.append(newperson)
+        
+        let newperson1 = Items()
+        newperson1.name = "Jalaja"
+        persons.append(newperson1)
+        
+        let newperson2 = Items()
+        newperson2.name = "Shilpa"
+        persons.append(newperson2)
         
         // Do any additional setup after loading the view.
     }
@@ -29,7 +41,17 @@ class ViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
      let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for:indexPath)
-        cell.textLabel?.text = persons[indexPath.row]
+        
+        let myitem = persons[indexPath.row]
+        
+        cell.textLabel?.text = myitem.name
+        
+        //ternary operator
+        
+        cell.accessoryType = myitem.done ? .checkmark : .none
+        
+       
+        
         return cell
     }
     
@@ -40,13 +62,9 @@ class ViewController: UITableViewController {
         //print (persons[indexPath.row])
         
         //tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+       persons[indexPath.row].done = !persons[indexPath.row].done
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType  == .checkmark  {
-           tableView.cellForRow(at: indexPath)?.accessoryType  = .none
-            
-        } else {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -59,7 +77,9 @@ class ViewController: UITableViewController {
         let alert = UIAlertController(title: "Add new Person" , message: "", preferredStyle: .alert )
         let action = UIAlertAction(title: "Add Person", style: .default) { (action) in
             //what will happen when "add person" is pressed
-            self.persons.append(textfield.text!)
+           let newitem = Items()
+            newitem.name = textfield.text!
+            self.persons.append(newitem)
             self.tableView.reloadData()
             self.mydefault.set(self.persons, forKey: "personsList")
         }
