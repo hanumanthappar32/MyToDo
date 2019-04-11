@@ -7,18 +7,20 @@
 //
 
 import UIKit
-
+import CoreData
 class ViewController: UITableViewController {
     
     
-    var persons = [Items] ()
+    var persons = [Item] ()
     
-    let mydefault = UserDefaults.standard
-
+   // let mydefault = UserDefaults.standard
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newperson = Items()
+        loadItems()
+        
+      /* let newperson = Items()
             newperson.name = "Ramesh"
             persons.append(newperson)
         
@@ -32,7 +34,7 @@ class ViewController: UITableViewController {
         
         if let items = mydefault.array(forKey: "personsList") as? [Items] {
             persons = items
-        }
+        }*/
         // Do any additional setup after loading the view.
     }
     //Mark - Table view data source method
@@ -45,7 +47,7 @@ class ViewController: UITableViewController {
         
         let myitem = persons[indexPath.row]
         
-        cell.textLabel?.text = myitem.name
+        cell.textLabel?.text = myitem.title
         
         //ternary operator
         
@@ -63,9 +65,12 @@ class ViewController: UITableViewController {
         //print (persons[indexPath.row])
         
         //tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-       persons[indexPath.row].done = !persons[indexPath.row].done
         
-        tableView.reloadData()
+        //context.delete(persons[indexPath.row])
+        //persons.remove(at: indexPath.row)
+       persons[indexPath.row].done = !persons[indexPath.row].done
+        self.saveItems()
+        //tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -78,11 +83,15 @@ class ViewController: UITableViewController {
         let alert = UIAlertController(title: "Add new Person" , message: "", preferredStyle: .alert )
         let action = UIAlertAction(title: "Add Person", style: .default) { (action) in
             //what will happen when "add person" is pressed
-           let newitem = Items()
-            newitem.name = textfield.text!
+           
+            let newitem = Item(context: self.context)
+            
+            newitem.title = textfield.text!
+            newitem.done = false
             self.persons.append(newitem)
-            self.tableView.reloadData()
-            self.mydefault.set(self.persons, forKey: "personsList")
+            //self.tableView.reloadData()
+            //self.mydefault.set(self.persons, forKey: "personsList")
+            self.saveItems()
         }
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new Person"
@@ -92,7 +101,31 @@ class ViewController: UITableViewController {
         alert.addAction(action)
         present(alert, animated: true,completion: nil)
         
+        
     }
+    func saveItems(){
+        do{
+           try context.save()
+        }catch{
+           print("Error saving context \(error)")
+        }
+        self.tableView.reloadData()
+        
+    }
+    func loadItems() {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        do{
+        persons = try context.fetch(request)
+        }catch{
+            print("Error in fetching data \(error)")
+        }
+    }
+            
+            
+        
+    
+    
+        
     
 }
 
