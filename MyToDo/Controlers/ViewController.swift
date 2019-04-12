@@ -13,31 +13,17 @@ class ViewController: UITableViewController {
     
     var persons = [Item] ()
     
-   // let mydefault = UserDefaults.standard
+   
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         loadItems()
         
-      /* let newperson = Items()
-            newperson.name = "Ramesh"
-            persons.append(newperson)
-        
-        let newperson1 = Items()
-        newperson1.name = "Jalaja"
-        persons.append(newperson1)
-        
-        let newperson2 = Items()
-        newperson2.name = "Shilpa"
-        persons.append(newperson2)
-        
-        if let items = mydefault.array(forKey: "personsList") as? [Items] {
-            persons = items
-        }*/
-        // Do any additional setup after loading the view.
+     
     }
-    //Mark - Table view data source method
+    //MARK: - Table view data source method
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return persons.count
     }
@@ -59,7 +45,7 @@ class ViewController: UITableViewController {
     }
     
     
-//Mark - Tableview Delegate methods
+    //MARK: - Tableview Delegate methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //print (persons[indexPath.row])
@@ -74,7 +60,7 @@ class ViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    //MARK - Add new person
+    //MARK: - Add new person
   
     @IBAction func addbutton(_ sender: UIBarButtonItem) {
         
@@ -112,20 +98,41 @@ class ViewController: UITableViewController {
         self.tableView.reloadData()
         
     }
-    func loadItems() {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
+    func loadItems(with request : NSFetchRequest<Item> = Item.fetchRequest()) {
+        
         do{
         persons = try context.fetch(request)
         }catch{
             print("Error in fetching data \(error)")
         }
+        tableView.reloadData()
     }
             
-            
-        
     
     
+    
+}
+
+//MARK: - Search bar methods
+extension ViewController : UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+         request.predicate = NSPredicate(format: "title CONTAINS %@", searchBar.text!)
         
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+       
+        loadItems(with: request)
+        
+        //print(searchBar.text!)
+    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
     
 }
 
