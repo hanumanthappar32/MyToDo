@@ -12,6 +12,12 @@ class ViewController: UITableViewController {
     
     
     var persons = [Item] ()
+    var selectedCatogory : Catogory? {
+        didSet {
+            loadItems()
+        }
+    }
+    
     
    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -19,7 +25,7 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         
         
-        loadItems()
+        
         
      
     }
@@ -74,6 +80,7 @@ class ViewController: UITableViewController {
             
             newitem.title = textfield.text!
             newitem.done = false
+            newitem.parentCatogory = self.selectedCatogory
             self.persons.append(newitem)
             //self.tableView.reloadData()
             //self.mydefault.set(self.persons, forKey: "personsList")
@@ -98,7 +105,17 @@ class ViewController: UITableViewController {
         self.tableView.reloadData()
         
     }
-    func loadItems(with request : NSFetchRequest<Item> = Item.fetchRequest()) {
+    func loadItems(with request : NSFetchRequest<Item> = Item.fetchRequest(), predicate : NSPredicate? = nil) {
+        
+        let catogoryPredicate = NSPredicate(format: "parentCatogory.name MATCHES %@", selectedCatogory!.name!)
+        
+        if let additionalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [catogoryPredicate,additionalPredicate])
+        }else{
+            request.predicate = catogoryPredicate
+        }
+        
+      
         
         do{
         persons = try context.fetch(request)
@@ -117,11 +134,11 @@ class ViewController: UITableViewController {
 extension ViewController : UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
-         request.predicate = NSPredicate(format: "title CONTAINS %@", searchBar.text!)
+         let predicate = NSPredicate(format: "title CONTAINS %@", searchBar.text!)
         
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
        
-        loadItems(with: request)
+        loadItems(with: request, predicate: predicate)
         
         //print(searchBar.text!)
     }
