@@ -12,9 +12,9 @@ class ViewController: UITableViewController {
     
     
     var persons = [Item] ()
-    var selectedCatogory : Catogory? {
+    var selectedCatogory : Category? {
         didSet {
-            loadItems()
+            //loadItems()
         }
     }
     
@@ -76,14 +76,14 @@ class ViewController: UITableViewController {
         let action = UIAlertAction(title: "Add Person", style: .default) { (action) in
             //what will happen when "add person" is pressed
            
-            let newitem = Item(context: self.context)
+           /* let newitem = Item(context: self.context)
             
             newitem.title = textfield.text!
             newitem.done = false
             newitem.parentCatogory = self.selectedCatogory
             self.persons.append(newitem)
             //self.tableView.reloadData()
-            //self.mydefault.set(self.persons, forKey: "personsList")
+            //self.mydefault.set(self.persons, forKey: "personsList")*/
             self.saveItems()
         }
         alert.addTextField { (alertTextField) in
@@ -105,7 +105,7 @@ class ViewController: UITableViewController {
         self.tableView.reloadData()
         
     }
-    func loadItems(with request : NSFetchRequest<Item> = Item.fetchRequest(), predicate : NSPredicate? = nil) {
+    /*func loadItems(with request : NSFetchRequest<Item> = Item.fetchRequest(), predicate : NSPredicate? = nil) {
         
         let catogoryPredicate = NSPredicate(format: "parentCatogory.name MATCHES %@", selectedCatogory!.name!)
         
@@ -123,7 +123,7 @@ class ViewController: UITableViewController {
             print("Error in fetching data \(error)")
         }
         tableView.reloadData()
-    }
+    }*/
             
     
     
@@ -131,7 +131,7 @@ class ViewController: UITableViewController {
 }
 
 //MARK: - Search bar methods
-extension ViewController : UISearchBarDelegate {
+/*extension ViewController : UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
          let predicate = NSPredicate(format: "title CONTAINS %@", searchBar.text!)
@@ -151,6 +151,6 @@ extension ViewController : UISearchBarDelegate {
         }
     }
     
-}
+}*/
 
 

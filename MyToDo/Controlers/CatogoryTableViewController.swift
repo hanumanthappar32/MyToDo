@@ -7,13 +7,15 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 
 
 class CatogoryTableViewController: UITableViewController  {
+    let realm = try! Realm()
     
-    var catogoryArry = [Catogory]()
+    
+    var catogoryArry = [Category]()
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -64,9 +66,11 @@ class CatogoryTableViewController: UITableViewController  {
     //MARK:- Table View Manupilation methods
     
     
-    func saveCatogories() {
+    func save(category : Category) {
         do{
-        try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         }catch{
             print("Error saving catogory \(error)")
         }
@@ -74,13 +78,13 @@ class CatogoryTableViewController: UITableViewController  {
     }
    
     func loadCatogories() {
-        let request : NSFetchRequest<Catogory> = Catogory.fetchRequest()
+        /* let request : NSFetchRequest<Catogory> = Catogory.fetchRequest()
         do {
         catogoryArry = try context.fetch(request)
         }catch{
             print("error in fetching catories \(error)")
         }
-        tableView.reloadData()
+        tableView.reloadData() */
     }
 
 
@@ -93,16 +97,16 @@ class CatogoryTableViewController: UITableViewController  {
         let action = UIAlertAction(title: "Add Catogory", style: .default) { (action) in
             //what will happen when "add person" is pressed
             
-            let newCatogory = Catogory(context: self.context)
+            let newCategory = Category()
             
         
-             newCatogory.name = textfield.text!
+             newCategory.name = textfield.text!
             //newitem.done = false
-            self.catogoryArry.append(newCatogory)
+            self.catogoryArry.append(newCategory)
             
             //self.tableView.reloadData()
             //self.mydefault.set(self.persons, forKey: "personsList")
-           self.saveCatogories()
+           self.save(category: newCategory)
         }
         alert.addAction(action)
         alert.addTextField { (field) in
