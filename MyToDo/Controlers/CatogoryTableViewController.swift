@@ -15,9 +15,11 @@ class CatogoryTableViewController: UITableViewController  {
     let realm = try! Realm()
     
     
-    var catogoryArry = [Category]()
+    var catogoryArry: Results<Category>?
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,15 +32,15 @@ class CatogoryTableViewController: UITableViewController  {
     //MARK: - Table View Data source methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return catogoryArry.count
+        return catogoryArry?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "CatogoryCell", for: indexPath)
         
-        let newCatogory = catogoryArry [indexPath.row]
-        cell.textLabel?.text = newCatogory.name
+       // let newCatogory = catogoryArry? [indexPath.row].name ?? "No Categories added yet"
+        cell.textLabel?.text = catogoryArry?[indexPath.row].name ?? "No Category added yet"
         return cell
         
     }
@@ -56,7 +58,7 @@ class CatogoryTableViewController: UITableViewController  {
         let destinationVC = segue.destination as! ViewController
         
         if  let indexpath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCatogory = catogoryArry[indexpath.row]
+            destinationVC.selectedCatogory = catogoryArry?[indexpath.row]
             
             
         }
@@ -78,13 +80,9 @@ class CatogoryTableViewController: UITableViewController  {
     }
    
     func loadCatogories() {
-        /* let request : NSFetchRequest<Catogory> = Catogory.fetchRequest()
-        do {
-        catogoryArry = try context.fetch(request)
-        }catch{
-            print("error in fetching catories \(error)")
-        }
-        tableView.reloadData() */
+        catogoryArry = realm.objects(Category.self)
+        
+        tableView.reloadData()
     }
 
 
@@ -102,7 +100,9 @@ class CatogoryTableViewController: UITableViewController  {
         
              newCategory.name = textfield.text!
             //newitem.done = false
-            self.catogoryArry.append(newCategory)
+            
+            
+            
             
             //self.tableView.reloadData()
             //self.mydefault.set(self.persons, forKey: "personsList")
